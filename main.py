@@ -15,8 +15,8 @@ async def main():
         async with db.engine.begin() as async_connect:
             await async_connect.run_sync(Base.metadata.create_all)
     await link_collection_processing(regions=['Москва'],
-                                     category='Стоматология',
-                                     count=950)
+                                     category='Барбершоп',
+                                     count=900)
 
 
 if __name__ == "__main__":
