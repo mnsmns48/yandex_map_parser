@@ -14,7 +14,7 @@ async def main():
         await asyncio.create_task(create_db())
         async with db.engine.begin() as async_connect:
             await async_connect.run_sync(Base.metadata.create_all)
-    await link_collection_processing(regions=['Московская область'],
+    await link_collection_processing(regions=['Москва'],
                                      category='Стоматология',
                                      count=950)
 
