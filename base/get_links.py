@@ -41,7 +41,7 @@ async def get_links_data(region: str, category: str, count: int):
     slider = driver.find_element(By.CSS_SELECTOR, '[class="scroll__scrollbar-thumb"]')
     slide_offset = 1
     errors = 0
-    driver.implicitly_wait(2)
+    driver.implicitly_wait(3)
     while True:
         try:
             action = ActionChains(driver)

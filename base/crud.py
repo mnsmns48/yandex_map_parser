@@ -19,7 +19,7 @@ async def write_links(session: AsyncSession, table: Table, data: list | dict):
 
 def pandas_query(session):
     conn = session.connection()
-    query = select(ScrapeData).order_by(ScrapeData.region | ScrapeData.city)
+    query = select(ScrapeData).order_by(ScrapeData.region.desc(), ScrapeData.city)
     return pd.read_sql_query(query, conn)
 
 
