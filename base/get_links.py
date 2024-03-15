@@ -10,6 +10,7 @@ from selenium.common import MoveTargetOutOfBoundsException, NoSuchElementExcepti
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from base.bs_processing import pars_inner_info
+from base.config import hidden
 from base.crud import write_links
 from base.engine import db
 from base.models import Base
@@ -40,7 +41,7 @@ async def get_links_data(region: str, category: str, count: int):
     slider = driver.find_element(By.CSS_SELECTOR, '[class="scroll__scrollbar-thumb"]')
     slide_offset = 1
     errors = 0
-    driver.implicitly_wait(1)
+    driver.implicitly_wait(2)
     while True:
         try:
             action = ActionChains(driver)
@@ -62,14 +63,16 @@ async def get_links_data(region: str, category: str, count: int):
                 for line in hrefs:
                     line.click()
                     print(line_n)
-                    await asyncio.sleep(random.uniform(2, 3))
+                    await asyncio.sleep(random.uniform(2.5, 3.5))
                     card = driver.find_element(By.XPATH, "//div[@class='business-card-view']")
                     soup = BeautifulSoup(markup=card.get_attribute('innerHTML'), features='lxml')
                     try:
-                        data = await pars_inner_info(soup=soup, requested_region=region)
+                        data = await pars_inner_info(soup=soup,
+                                                     requested_region=region,
+                                                     city_status=hidden.city)
                         async with db.scoped_session() as session:
                             await write_links(session=session,
-                                              table=Base.metadata.tables.get('scrapedata'),
+                                              table=Base.metadata.tables.get(hidden.db_table_name),
                                               data=data)
                     except (ValueError, StaleElementReferenceException):
                         continue

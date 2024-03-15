@@ -48,10 +48,10 @@ async def create_business_contacts(soup: BeautifulSoup) -> dict:
 
 
 def only_num(s: str) -> int:
-    return int(re.sub('[^\d]', '', s))
+    return int(re.sub(r'\D', '', s))
 
 
-async def pars_inner_info(soup: BeautifulSoup, requested_region: str) -> dict:
+async def pars_inner_info(soup: BeautifulSoup, requested_region: str, city_status: bool) -> dict:
     category = soup.find(name='a', attrs={'class': 'business-categories-view__category'})
     name = soup.find(name='a', attrs={'class': 'card-title-view__title-link'})
     address = soup.find(name='div', attrs={'class': 'business-contacts-view__address-link'})
@@ -63,7 +63,6 @@ async def pars_inner_info(soup: BeautifulSoup, requested_region: str) -> dict:
     result_dict = {
         'category': category.getText() if category else None,
         'region': requested_region,
-        'city': address.get('aria-label').rsplit(', ', 1)[1] if address else None,
         'name': name.getText() if name else None,
         'address': address.get('aria-label') if address else None,
         'phone': phone.getText() if phone else None,
@@ -72,6 +71,14 @@ async def pars_inner_info(soup: BeautifulSoup, requested_region: str) -> dict:
         'link': 'https://yandex.ru' + link.get('href') if link else None,
         'site': site.getText() if site else None
     }
+    if city_status:
+        result_dict.update({
+            'city': requested_region
+        })
+    else:
+        result_dict.update({
+            'city': address.get('aria-label').rsplit(', ', 1)[1] if address else None,
+        })
     business_contacts = await create_business_contacts(soup)
     showcase = await create_showcase(soup)
     result_dict.update(business_contacts)
@@ -79,23 +86,4 @@ async def pars_inner_info(soup: BeautifulSoup, requested_region: str) -> dict:
         result_dict.update({
             'showcase': showcase
         })
-    # print(result_dict.get('category'))
-    # print(result_dict.get('region'))
-    # print(result_dict.get('name'))
-    # print(result_dict.get('address'))
-    # print(result_dict.get('rank'))
-    # print(result_dict.get('rank_grade'))
-    # print(result_dict.get('link'))
-    # print(result_dict.get('site'))
-    # print(result_dict.get('vkontakte'))
-    # print(result_dict.get('ok'))
-    # print(result_dict.get('telegram'))
-    # print(result_dict.get('whatsapp'))
-    # print(result_dict.get('viber'))
-    # print(result_dict.get('youtube'))
-    # showcase = result_dict.get('showcase')
-    # if showcase:
-    #     data = json.loads(showcase)
-    #     for line in data:
-    #         print(line.get('service'), line.get('price'))
     return result_dict

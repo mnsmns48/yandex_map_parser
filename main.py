@@ -6,6 +6,7 @@ from base.crud import output_results
 from base.engine import db, create_db
 from base.get_links import link_collection_processing
 from base.models import Base
+from base.config import hidden
 
 
 async def main():
@@ -22,9 +23,9 @@ async def main():
         choice = int(input())
 
         if choice == 1:
-            await link_collection_processing(regions=['Москва'],
-                                             category='Барбершоп',
-                                             count=900)
+            await link_collection_processing(regions=hidden.region,
+                                             category=hidden.category,
+                                             count=hidden.max_page_count)
         elif choice == 2:
             await output_results()
         else:
