@@ -62,7 +62,7 @@ async def get_links_data(region: str, category: str, count: int):
                 for line in hrefs:
                     line.click()
                     print(line_n)
-                    await asyncio.sleep(random.uniform(2.5, 3.5))
+                    await asyncio.sleep(random.uniform(2, 3))
                     card = driver.find_element(By.XPATH, "//div[@class='business-card-view']")
                     soup = BeautifulSoup(markup=card.get_attribute('innerHTML'), features='lxml')
                     try:

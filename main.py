@@ -1,6 +1,8 @@
 import asyncio
 
 from asyncpg import InvalidCatalogNameError
+
+from base.crud import output_results
 from base.engine import db, create_db
 from base.get_links import link_collection_processing
 from base.models import Base
@@ -14,9 +16,21 @@ async def main():
         await asyncio.create_task(create_db())
         async with db.engine.begin() as async_connect:
             await async_connect.run_sync(Base.metadata.create_all)
-    await link_collection_processing(regions=['Москва'],
-                                     category='Барбершоп',
-                                     count=900)
+    print('Press 1 to parsing\n'
+          'Press 2 to output_result')
+    try:
+        choice = int(input())
+
+        if choice == 1:
+            await link_collection_processing(regions=['Москва'],
+                                             category='Барбершоп',
+                                             count=900)
+        elif choice == 2:
+            await output_results()
+        else:
+            print('Unknown choice')
+    except TypeError:
+        print('It is necessary to make a choice by number')
 
 
 if __name__ == "__main__":
